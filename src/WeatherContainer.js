@@ -5,24 +5,33 @@ import { useHistoryState } from "./useHistroy";
 var moment = require("moment");
 
 function WeatherContainer() {
-  const CITY_HISTORY_STATE_KEY = "";
-
   const [completeData, setCompleteData] = useState([]);
   const [dailyData, setDailyData] = useState(
     JSON.parse(localStorage.getItem("data")) || []
   );
-  const [cityName, setCityName] = useHistoryState(CITY_HISTORY_STATE_KEY, "");
+  const [cityName, setCityName] = useState(
+    localStorage.getItem("cityName") || ""
+  );
   const [hasError, setHasError] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(false);
 
   useEffect(() => {
     setDailyData(JSON.parse(localStorage.getItem("data")) || []);
-    if (dailyData.length <= 0) refreshData();
+    if (dailyData.length <= 0 || refreshTrigger) {
+      refreshData();
+      setRefreshTrigger(false);
+    }
+  }, [refreshTrigger]);
+
+  useEffect(() => {
+    setRefreshTrigger(true);
   }, []);
 
   let display;
   if (completeData.length > 0 || hasError == false) {
     display = displayData();
   }
+
   function changeText(event) {
     setCityName(event.target.value);
   }
@@ -37,6 +46,7 @@ function WeatherContainer() {
       />
     ));
   }
+
   function refreshData() {
     const _url = `http://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=imperial&APPID=3981c77803578cc809ae7fa0836c638e`;
     fetch(_url)
@@ -56,7 +66,7 @@ function WeatherContainer() {
         setHasError(false);
         setDailyData(_data);
         localStorage.setItem("data", JSON.stringify(_data));
-        setDailyData(JSON.parse(localStorage.getItem("data")) || []);
+        localStorage.setItem("cityName", cityName);
       })
       .catch((err) => {
         setCompleteData([]);
@@ -64,6 +74,7 @@ function WeatherContainer() {
         setDailyData([]);
       });
   }
+
   return (
     <div className="container">
       <br></br>
