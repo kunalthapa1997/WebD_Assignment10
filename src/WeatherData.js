@@ -16,7 +16,7 @@ function WeatherData(props) {
   const farenheitTemp = props.reading.main.temp;
 
   return (
-    <div className="row">
+    <div className="row" style={{marginBottom: "3rem"}}>
       <div className="col-12">
         <Link
           to={{
