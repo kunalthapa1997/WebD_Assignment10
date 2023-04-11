@@ -80,7 +80,7 @@ function WeatherContainer() {
       <br></br>
       <br></br>
       <br></br>
-      <h1>INFO6150 - Assignment 8</h1>
+      <h1>Assignment 10</h1>
       <h2>Weather Report - : {cityName} </h2>
       <br />
       <br />
